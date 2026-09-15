@@ -5,10 +5,10 @@ services:
     restart: unless-stopped
     healthcheck:
       test: [ "CMD", "redis-cli", "--raw", "incr", "ping" ]
-      interval: 15s
+      interval: 10s
       timeout: 5s
       retries: 10
-      start_period: 10s
+      start_period: 5s
     networks:
       - media-net
     volumes:
@@ -22,11 +22,11 @@ services:
     image: mysql:8
     restart: unless-stopped
     healthcheck:
-      test: [ "CMD", "bash", "-c", "cat < /dev/null > /dev/tcp/127.0.0.1/3306" ]
-      interval: 15s
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-u", "root", "-proot"]
+      interval: 10s
       timeout: 5s
       retries: 10
-      start_period: 10s
+      start_period: 30s
     networks:
       - media-net
     environment:
@@ -39,7 +39,7 @@ services:
       - ./docker/mysql/conf:/etc/mysql/conf.d
       - ./docker/logs/mysql:/logs
       - ./docker/volumes/mysql/data:/var/lib/mysql  
-      - ./数据库/2.7.4/初始化-mysql-2.7.4.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./docker/mysql/init.sql:/docker-entrypoint-initdb.d/init.sql
     command: [
           '--innodb-buffer-pool-size=80M',
           '--character-set-server=utf8mb4',
@@ -74,7 +74,7 @@ services:
     build:
       context: .
       dockerfile: ./docker/wvp/Dockerfile
-    restart: always
+    restart: unless-stopped
     networks:
       - media-net
     ports:
@@ -82,9 +82,12 @@ services:
       - "${SIP_Port:-8116}:${SIP_Port:-8116}/udp"
       - "${SIP_Port:-8116}:${SIP_Port:-8116}/tcp"
     depends_on:
-      - polaris-redis
-      - polaris-mysql
-      - polaris-media
+      polaris-redis:
+        condition: service_healthy
+      polaris-mysql:
+        condition: service_healthy
+      polaris-media:
+        condition: service_started
     volumes:
       - ./docker/wvp/config:/opt/wvp/config
       - ./docker/wvp/wvp/:/opt/ylcx/wvp/
@@ -98,7 +101,7 @@ services:
       ZLM_HOST: polaris-media
       ZLM_SERCERT: su6TiedN2rVAmBbIDX0aa0QTiBJLBdcf
 
-      MediaHttp: ${WebHttp:-8080}
+      MediaHttp: ${WebHttp:-18080}
       MediaRtmp: ${MediaRtmp:-10935}
       MediaRtsp: ${MediaRtsp:-5540}
       MediaRtp: ${MediaRtp:-10000}
@@ -124,8 +127,9 @@ services:
     build:
       context: .
       dockerfile: ./docker/nginx/Dockerfile
+    restart: unless-stopped
     ports:
-      - "${WebHttp:-8080}:8080"
+      - "${WebHttp:-18080}:8080"
     depends_on:
       - polaris-wvp
     volumes:
