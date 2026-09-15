@@ -21,12 +21,6 @@ services:
   polaris-mysql:
     image: mysql:8
     restart: unless-stopped
-    healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-u", "root", "-proot"]
-      interval: 10s
-      timeout: 5s
-      retries: 10
-      start_period: 30s
     networks:
       - media-net
     environment:
@@ -82,12 +76,9 @@ services:
       - "${SIP_Port:-8116}:${SIP_Port:-8116}/udp"
       - "${SIP_Port:-8116}:${SIP_Port:-8116}/tcp"
     depends_on:
-      polaris-redis:
-        condition: service_healthy
-      polaris-mysql:
-        condition: service_healthy
-      polaris-media:
-        condition: service_started
+      - polaris-redis
+      - polaris-mysql
+      - polaris-media
     volumes:
       - ./docker/wvp/config:/opt/wvp/config
       - ./docker/wvp/wvp/:/opt/ylcx/wvp/
