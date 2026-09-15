@@ -39,7 +39,7 @@ services:
       - ./docker/mysql/conf:/etc/mysql/conf.d
       - ./docker/logs/mysql:/logs
       - ./docker/volumes/mysql/data_v2:/var/lib/mysql  
-      - ./docker/mysql/wvp-init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./docker/mysql/db:/docker-entrypoint-initdb.d
     command: [
           '--innodb-buffer-pool-size=80M',
           '--character-set-server=utf8mb4',
