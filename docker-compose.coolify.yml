@@ -13,7 +13,7 @@ services:
       - media-net
     volumes:
       - ./docker/redis/conf/redis.conf:/opt/polaris/redis/redis.conf
-      - ./docker/volumes/redis/data/:/data
+      - redis_data:/data
     environment:
       TZ: "Asia/Shanghai"
     command: redis-server /opt/polaris/redis/redis.conf --appendonly yes
@@ -21,6 +21,12 @@ services:
   polaris-mysql:
     image: mysql:8
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "bash", "-c", "cat < /dev/null > /dev/tcp/127.0.0.1/3306"]
+      interval: 10s
+      timeout: 5s
+      retries: 15
+      start_period: 20s
     networks:
       - media-net
     environment:
@@ -30,9 +36,7 @@ services:
       MYSQL_PASSWORD: wvp_password
       TZ: Asia/Shanghai
     volumes:
-      - ./docker/mysql/conf:/etc/mysql/conf.d
-      - ./docker/logs/mysql:/logs
-      - ./docker/volumes/mysql/data_v2:/var/lib/mysql  
+      - mysql_data:/var/lib/mysql  
       - ./docker/mysql/db:/docker-entrypoint-initdb.d
     command: [
           '--innodb-buffer-pool-size=80M',
@@ -55,8 +59,7 @@ services:
       - "${MediaRtp:-10000}:${MediaRtp:-10000}/tcp"
       - "${MediaRtp:-10000}:${MediaRtp:-10000}/udp"
     volumes:
-      - ./docker/volumes/video:/opt/media/bin/www/record/
-      - ./docker/logs/media:/opt/media/log/
+      - video_recordings:/opt/media/bin/www/record/
       - ./docker/media/config.ini:/conf/config.ini
     command: [
         'MediaServer',
@@ -80,9 +83,7 @@ services:
       - polaris-mysql
       - polaris-media
     volumes:
-      - ./docker/wvp/config:/opt/wvp/config
       - ./docker/wvp/wvp/:/opt/ylcx/wvp/
-      - ./docker/logs/wvp:/opt/wvp/logs/
     environment:
       TZ: "Asia/Shanghai"
       RUN_ENV: "docker"
@@ -125,7 +126,6 @@ services:
       - polaris-wvp
     volumes:
       - ./docker/nginx/templates/:/etc/nginx/templates
-      - ./docker/logs/nginx:/var/log/nginx
     environment:
       Stream_IP: ${Stream_IP}
     networks:
@@ -134,3 +134,8 @@ services:
 networks:
   media-net:
     driver: bridge
+
+volumes:
+  mysql_data:
+  redis_data:
+  video_recordings:
