@@ -7,10 +7,10 @@ services:
     restart: unless-stopped
     healthcheck:
       test: [ "CMD", "redis-cli", "ping" ]
-      interval: 5s
-      timeout: 3s
-      retries: 10
-      start_period: 2s
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
     networks:
       - media-net
     volumes:
@@ -25,11 +25,11 @@ services:
       dockerfile: ./docker/mysql/Dockerfile
     restart: unless-stopped
     healthcheck:
-      test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -uroot -proot && mysql -h 127.0.0.1 -uroot -proot -e 'SELECT 1 FROM wvp.wvp_user LIMIT 1;'"]
-      interval: 5s
+      test: ["CMD-SHELL", "mysqladmin ping -h localhost -uroot -proot || exit 1"]
+      interval: 10s
       timeout: 5s
-      retries: 30
-      start_period: 25s
+      retries: 10
+      start_period: 30s
     networks:
       - media-net
     environment:
@@ -39,7 +39,7 @@ services:
       MYSQL_PASSWORD: wvp_password
       TZ: Asia/Shanghai
     volumes:
-      - mysql_data_v5:/var/lib/mysql
+      - mysql_data_v6:/var/lib/mysql
     command: [
           '--innodb-buffer-pool-size=80M',
           '--character-set-server=utf8mb4',
@@ -81,12 +81,9 @@ services:
       - "${SIP_Port:-8116}:${SIP_Port:-8116}/udp"
       - "${SIP_Port:-8116}:${SIP_Port:-8116}/tcp"
     depends_on:
-      polaris-mysql:
-        condition: service_healthy
-      polaris-redis:
-        condition: service_healthy
-      polaris-media:
-        condition: service_started
+      - polaris-mysql
+      - polaris-redis
+      - polaris-media
     environment:
       TZ: "Asia/Shanghai"
       RUN_ENV: "docker"
@@ -137,6 +134,6 @@ networks:
     driver: bridge
 
 volumes:
-  mysql_data_v5:
+  mysql_data_v6:
   redis_data:
   video_recordings:
