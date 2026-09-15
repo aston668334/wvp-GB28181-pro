@@ -22,7 +22,7 @@ spring:
           # [可选] 数据库 DB
           database: 1
           # [可选] 访问密码,若你的redis服务器没有设置密码，就不需要用密码去连接
-          password:
+          # password:
           # [可选] 超时时间
           timeout: 10000
          ## [可选] 一个pool最多可分配多少个jedis实例
@@ -97,46 +97,30 @@ media:
   ws-flv-port: ${MediaHttp:}
   ws-flv-ssl-port: ${MediaHttps:}
   rtp-proxy-port: ${MediaRtp:}
-  rtmp-port: ${MediaRtmp:}
-  rtmp-ssl-port: 0
-  rtsp-port: ${MediaRtsp:}
-  rtsp-ssl-port: 0
-  # [可选] 是否自动配置ZLM, 如果希望手动配置ZLM, 可以设为false, 不建议新接触的用户修改
+  rtp-enable: true
+  rtp-port-range: 30000,30500
+  secret: ${ZLM_SERCERT:su6TiedN2rVAmBbIDX0aa0QTiBJLBdcf}
   auto-config: true
-  # [可选] 
-  secret: ${ZLM_SERCERT}
-  # 启用多端口模式, 多端口模式使用端口区分每路流，兼容性更好。 单端口使用流的ssrc区分， 点播超时建议使用多端口测试
-  rtp:
-    # [可选] 是否启用多端口模式, 开启后会在portRange范围内选择端口用于媒体流传输
-    enable: false
-    # [可选] 
-    port-range: 30000,30500 
-    # [可选] 
-    send-port-range: 50502,50506 
-
-  record-path: /opt/media/bin/www/record/
-  record-day: 7
+  auto-apply-to-media: true
+  hook-prefix:
   record-assist-port: 0
-user-settings:
-    auto-apply-play: true
-    play-timeout: 30000
-    wait-track: false
-    record-push-live: ${RecordPushLive:false}
-    record-sip: ${RecordSip:false}
-    stream-on-demand: true
-    interface-authentication: true
-    broadcast-for-platform: TCP-PASSIVE
-    push-stream-after-ack: true
-    send-to-platforms-when-id-lost: true
-    interface-authentication-excludes:
-    #  - /api/**
-    push-authority: true
-    # allowed-origins:
-    #   - http://localhost:8080
-    #   - http://127.0.0.1:8080
-    #   - http://0.0.0.0:8080
-    #   - ${NGINX_HOST}
-    jwkFile: classpath:xxxxxxxxxxx.json
-logging:
-  config: classpath:logback-spring.xml
-
+  record-day: 7
+  restart-rtp-server-when-stopped: true
+  # [可选] 自动关闭无用拉流，当无人观看时自动关闭拉流， 默认true
+  auto-close: true
+  # [可选] 自动关闭无用拉流的等待时间， 单位秒， 默认10秒
+  auto-close-wait-time: 10
+  # [可选] 自动点播， 默认false
+  auto-play: false
+  # [可选] 自动关闭无用拉流的等待时间， 单位秒， 默认10秒
+  auto-play-wait-time: 10
+  # [可选] 自动关闭无用拉流的等待时间， 单位秒， 默认10秒
+  record-day: 7
+  # [可选] 录像文件保存路径
+  record-path: /opt/media/bin/www/record/
+  # [可选] 录像切片时间， 单位秒， 默认60秒
+  record-slice-time: 60
+  # [可选] 录像文件格式， 默认mp4
+  record-file-format: mp4
+  # [可选] 录像文件命名规则， 默认{stream}/{date}/{time}.mp4
+  record-file-name-rule: '{stream}/{date}/{time}.mp4'

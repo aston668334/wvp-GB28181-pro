@@ -18,8 +18,9 @@ WORKDIR /build/target
 RUN mv wvp-pro-*.jar wvp.jar
 
 FROM ringcentral/jdk:21.0.9
-RUN mkdir -p /opt/wvp
+RUN mkdir -p /opt/wvp /opt/ylcx/wvp
 WORKDIR /opt/wvp
 COPY --from=builder /build/target /opt/wvp
 COPY ./docker/wvp/wvp /opt/wvp
-ENTRYPOINT ["java", "-Djava.net.preferIPv4Stack=true", "-Xms512m", "-Xmx1024m", "-XX:+HeapDumpOnOutOfMemoryError", "-XX:HeapDumpPath=/opt/ylcx/", "-jar", "wvp.jar", "--spring.config.location=/opt/ylcx/wvp/application.yml"]
+COPY ./docker/wvp/wvp /opt/ylcx/wvp
+ENTRYPOINT ["java", "-Djava.net.preferIPv4Stack=true", "-Xms512m", "-Xmx1024m", "-XX:+HeapDumpOnOutOfMemoryError", "-XX:HeapDumpPath=/opt/ylcx/", "-jar", "wvp.jar", "--spring.config.location=/opt/wvp/application.yml"]

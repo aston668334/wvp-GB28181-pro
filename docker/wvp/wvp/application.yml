@@ -4,5 +4,6 @@ spring:
   config:
     import:
       - optional:file:/opt/ylcx/wvp/application-docker.yml
+      - file:/opt/wvp/application-docker.yml
   profiles:
     active: docker
