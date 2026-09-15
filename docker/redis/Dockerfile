@@ -1,5 +1,2 @@
-FROM redis
-
-RUN mkdir -p /opt/polaris/redis
-WORKDIR /opt/polaris/redis
-COPY ./conf/redis.conf /opt/polaris/redis/redis.conf
+FROM redis:latest
+COPY ./docker/redis/conf/redis.conf /opt/polaris/redis/redis.conf
