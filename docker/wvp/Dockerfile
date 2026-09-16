@@ -14,6 +14,7 @@ RUN apt-get update && \
     apt-get install -y maven && \
     rm -rf /var/lib/apt/lists/*
 
+COPY ./docker/wvp/settings.xml /root/.m2/settings.xml
 COPY . /build
 WORKDIR /build
 RUN ls && mvn clean package -Dmaven.test.skip=true -Dmaven.gitcommitid.skip=true
