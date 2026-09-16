@@ -39,6 +39,16 @@ server {
         sub_filter "wss://$original_host/mp4_record" "mp4_record";
         sub_filter "wss://$original_host:443/mp4_record" "mp4_record";
         
+        # 替换RTP实时流地址中的主机与端口为客户端实际访问地址
+        sub_filter "ws://$original_host:80/rtp" "ws://$http_host/rtp";
+        sub_filter "ws://$original_host/rtp" "ws://$http_host/rtp";
+        sub_filter "wss://$original_host:443/rtp" "wss://$http_host/rtp";
+        sub_filter "wss://$original_host/rtp" "wss://$http_host/rtp";
+        sub_filter "http://$original_host:80/rtp" "http://$http_host/rtp";
+        sub_filter "http://$original_host/rtp" "http://$http_host/rtp";
+        sub_filter "https://$original_host:443/rtp" "https://$http_host/rtp";
+        sub_filter "https://$original_host/rtp" "https://$http_host/rtp";
+        
         # 设置为off表示替换所有匹配项，而不仅仅是第一个
         sub_filter_once off;
         
