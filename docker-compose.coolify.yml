@@ -135,6 +135,7 @@ services:
         condition: service_healthy
     environment:
       Stream_IP: ${Stream_IP}
+      NGINX_ENVSUBST_FILTER: Stream_IP
     networks:
       - media-net
 
