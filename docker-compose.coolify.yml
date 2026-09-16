@@ -38,7 +38,7 @@ services:
       MYSQL_PASSWORD: wvp_password
       TZ: Asia/Shanghai
     volumes:
-      - mysql_data_v7:/var/lib/mysql
+      - mysql_data_v8:/var/lib/mysql
     command: [
           '--innodb-buffer-pool-size=80M',
           '--character-set-server=utf8mb4',
@@ -143,6 +143,6 @@ networks:
     driver: bridge
 
 volumes:
-  mysql_data_v7:
+  mysql_data_v8:
   redis_data:
   video_recordings:
