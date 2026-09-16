@@ -97,8 +97,10 @@ media:
   ws-flv-port: ${MediaHttp:}
   ws-flv-ssl-port: ${MediaHttps:}
   rtp-proxy-port: ${MediaRtp:}
-  rtp-enable: true
-  rtp-port-range: 30000,30500
+  rtp:
+    enable: true
+    port-range: 30000,30500
+    send-port-range: 30000,30500
   secret: ${ZLM_SERCERT:su6TiedN2rVAmBbIDX0aa0QTiBJLBdcf}
   auto-config: true
   auto-apply-to-media: true
