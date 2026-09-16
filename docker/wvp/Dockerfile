@@ -17,7 +17,10 @@ RUN apt-get update && \
 COPY ./docker/wvp/settings.xml /root/.m2/settings.xml
 COPY . /build
 WORKDIR /build
-RUN ls && mvn clean package -Dmaven.test.skip=true -Dmaven.gitcommitid.skip=true
+RUN if ! mvn clean package -Dmaven.test.skip=true -Dmaven.gitcommitid.skip=true > /tmp/maven-build.log 2>&1; then \
+      cat /tmp/maven-build.log; \
+      exit 1; \
+    fi
 WORKDIR /build/target
 RUN mv wvp-pro-*.jar wvp.jar
 
