@@ -60,6 +60,8 @@ services:
       - "${MediaRtsp:-5540}:${MediaRtsp:-5540}/udp"
       - "${MediaRtp:-10000}:${MediaRtp:-10000}/tcp"
       - "${MediaRtp:-10000}:${MediaRtp:-10000}/udp"
+      - "30000-30050:30000-30050/tcp"
+      - "30000-30050:30000-30050/udp"
     volumes:
       - video_recordings:/opt/media/bin/www/record/
     command: [
@@ -105,6 +107,8 @@ services:
       MediaRtmp: ${MediaRtmp:-10935}
       MediaRtsp: ${MediaRtsp:-5540}
       MediaRtp: ${MediaRtp:-10000}
+      MEDIA_RTP_ENABLE: ${MEDIA_RTP_ENABLE:-true}
+      MEDIA_RTP_PORT_RANGE: ${MEDIA_RTP_PORT_RANGE:-30000,30050}
 
       REDIS_HOST: polaris-redis
       REDIS_PORT: 6379
