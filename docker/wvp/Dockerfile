@@ -1,4 +1,7 @@
-FROM ringcentral/jdk:21.0.9 AS builder
+# ringcentral/jdk:21.0.9 requires the x86-64-v2 instruction set.  Keep the
+# Java 21 toolchain on the more broadly compatible Jammy base so this stack
+# also runs on older x86_64 hosts.
+FROM eclipse-temurin:21-jdk-jammy AS builder
 
 EXPOSE 18978/tcp
 EXPOSE 8116/tcp
@@ -17,7 +20,7 @@ RUN ls && mvn clean package -Dmaven.test.skip=true -Dmaven.gitcommitid.skip=true
 WORKDIR /build/target
 RUN mv wvp-pro-*.jar wvp.jar
 
-FROM ringcentral/jdk:21.0.9
+FROM eclipse-temurin:21-jdk-jammy
 RUN mkdir -p /opt/wvp /opt/ylcx/wvp
 WORKDIR /opt/wvp
 COPY --from=builder /build/target /opt/wvp
