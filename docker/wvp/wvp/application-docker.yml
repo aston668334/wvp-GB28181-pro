@@ -104,7 +104,6 @@ media:
   auto-apply-to-media: true
   hook-prefix:
   record-assist-port: 0
-  record-day: 7
   restart-rtp-server-when-stopped: true
   # [可选] 自动关闭无用拉流，当无人观看时自动关闭拉流， 默认true
   auto-close: true
